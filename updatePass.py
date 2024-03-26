@@ -1,60 +1,57 @@
 from flask import Flask, request, render_template
-from flask_mail import *
-import re
+from flask_sqlalchemy import SQLAlchemy
+from passwords import get_password_hash, validate_passwords
+from checkCreds import check_email
 
-def passreqs(password):
-    # Check for at least one uppercase letter
-    uppercase_regex = re.compile(r'[A-Z]')
-    if not uppercase_regex.search(password):
-        return False
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user_credentials.db'
+db = SQLAlchemy(app)
 
-    # Check for at least one lowercase letter
-    lowercase_regex = re.compile(r'[a-z]')
-    if not lowercase_regex.search(password):
-        return False
 
-    # Check for at least one special character
-    special_char_regex = re.compile(r'[^A-Za-z0-9]')
-    if not special_char_regex.search(password):
-        return False
+class UserCredentials(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    hashed_password = db.Column(db.String(128), nullable=False)
 
-    # All requirements met
-    return True
+
+def goodPass(new_password, conf_password):
+    email = request.form.get('email')
+    if check_email(email):
+        if validate_passwords(new_password) and new_password == conf_password:
+            return True
+        elif validate_passwords(new_password) and new_password != conf_password:
+            print("Passwords must be identical.")
+            return False
+        else:
+            print("Password does not fulfill requirements.")
+            return False
+    else:
+        return None
 
 def update_password(new_password, conf_password):
-    if new_password != conf_password:
-        return "Error: Ensure Passwords are Identical!"
-    
-    if not passreqs(new_password):
-        return "Error: Password does not meet requirements!"
+    if goodPass(new_password, conf_password):
+        hashPass = get_password_hash(new_password)
+        email = request.form.get('email')
+        user = UserCredentials(email=email, hashed_password=hashPass)
 
-    # Perform password update here (not implemented in this example)
-    return "Password Updated!"
+        db.session.add(user)
+        db.session.commit()
+        print("Password Updated.")
 
-def create_app():
-    app = Flask(__name__)
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    return render_template("update_password.html")
 
-    @app.route("/", methods=['GET', 'POST'])
-    def index():
-        return render_template("update_password.html")
-    
-    @app.route("/update_password", methods=["POST"])
-    def handle_update_password():
-        new_password = request.form.get("new_password")
-        conf_password = request.form.get("conf_password")
-      
-        result = update_password(new_password, conf_password)
-        return result
-
-    return app
+@app.route("/update_password", methods=["POST"])
+def handle_update_password():
+    new_password = request.form.get("new_password")
+    conf_password = request.form.get("conf_password")
+  
+    result = update_password(new_password, conf_password)
+    return result
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     # Run the app on port 5001
-    app = create_app()
-    app.run(port=5001)
-
-
-if __name__ == "__main__":
-    # Run the app on port 5001
-    app = create_app()
     app.run(port=5001)
