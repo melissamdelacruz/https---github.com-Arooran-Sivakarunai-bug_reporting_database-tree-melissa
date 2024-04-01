@@ -1,4 +1,6 @@
-#!/Users/melissadelacruz/Desktop/it3/updates/practice/venv/bin/python3.12
+#!/bin/sh
+'''exec' "/Users/melissadelacruz/Desktop/bug system/project/venv/bin/python3.12" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys
