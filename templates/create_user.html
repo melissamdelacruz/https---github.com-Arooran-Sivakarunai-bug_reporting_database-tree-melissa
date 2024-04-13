@@ -5,7 +5,7 @@
 {% endblock %}
 {% block pagetitle %}<p>Register</p>{% endblock %}
 {% block content %}
-<title>Log In Screen</title>
+<title>Login Screen</title>
 <form method="post">
     <label for="userID">userID:</label><br>
     <input type="text" id="userID" name="userID" value="{{ request.form['userID'] }}"><br>
@@ -13,6 +13,7 @@
     <input type="text" id="username" name="username" value="{{ request.form['username'] }}"><br>
     <label for="password">password:</label><br>
     <input type="password" id="password" name="password" value="{{ request.form['password'] }}">
-    <button type="submit" name="SUBMIT" value="SUBMIT"></button>
+    <button type="submit" value="SUBMIT">Submit</button>
+
   </form> 
 {% endblock %}

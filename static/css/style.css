@@ -1,8 +1,16 @@
+
 body,html{
     width: 100vw;
     height: 100vh;
     margin: 0px;
-    padding: 0px;
+    padding: 20px;
+}
+
+h1 {
+  position: relative;
+  display: inline; 
+  margin-right: 10px; 
+  font-size: 50px;
 }
 
 .dark-mode {
@@ -15,6 +23,36 @@ body,html{
     margin: 5px;
     color: #970020;
     background-color: #ffd5de;
+}
+
+.logo {
+  position: relative; 
+  width: 200px; 
+  height: 200px;
+  vertical-align: middle; 
+
+}
+
+#glass {
+  position: absolute; 
+  top: 50%; 
+  left: 70%; 
+  transform: translate(-50%, -50%); 
+  width: 300px; 
+  height: 200px; 
+}
+
+.home {
+  padding-left: 20px
+}
+
+#ladybug {
+  width: 150px;
+  height:150px;
+}
+
+.title {
+  display: flex;   
 }
 
 .switch {
